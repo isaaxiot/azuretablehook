@@ -8,7 +8,7 @@ package main
 
 import (
 	log "github.com/sirupsen/logrus"
-	"github.com/kpfaulkner/azuretablehook"
+	"github.com/xshellinc/azuretablehook"
 	)
 
 func main() {
