@@ -76,7 +76,7 @@ func createTable(tableCli storage.TableServiceClient, tableName string) (*storag
 
 		if azureErr.Code != tableAlreadyExists {
 			// we are ok if the table already exists. Otherwise return nil
-			return nil, fmt.Errorf("Unable to create log table: %s", tableName)
+			return nil, fmt.Errorf("Unable to create log table: %s. Error: %s", tableName, azureErr.Message)
 		}
 
 	}
