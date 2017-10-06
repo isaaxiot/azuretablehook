@@ -106,7 +106,7 @@ func (hook *AtsHook) Fire(entry *logrus.Entry) error {
 		return nil
 	}
 	rowKey := strconv.FormatInt(int64(entry.Time.UnixNano()), 10)
-	tableEntry := hook.table.GetEntityReference("logrus", rowKey)
+	partitionKey := "logrus"
 	props := make(map[string]interface{})
 
 	// technically dont need to make since entry.Data is already a map to interface. But will keep mapping here incase it changes.
@@ -116,6 +116,12 @@ func (hook *AtsHook) Fire(entry *logrus.Entry) error {
 	props[timestampID] = entry.Time.UTC()
 	props[levelID] = entry.Level.String()
 	props[messageID] = entry.Message
+
+	if service, ok := props["service"]; ok {
+		partitionKey = service.(string)
+	}
+
+	tableEntry := hook.table.GetEntityReference(partitionKey, rowKey)
 	tableEntry.Properties = props
 	err := tableEntry.Insert(storage.EmptyPayload, nil)
 	if err != nil {
