@@ -1,6 +1,7 @@
 package atshook
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/Azure/azure-sdk-for-go/storage"
 	"github.com/sirupsen/logrus"
@@ -110,7 +111,16 @@ func (hook *AtsHook) Fire(entry *logrus.Entry) error {
 
 	// technically dont need to make since entry.Data is already a map to interface. But will keep mapping here incase it changes.
 	for k, v := range entry.Data {
-		props[k] = v
+		switch v.(type) {
+		case byte, int, int64, float64, float32, bool, string, []byte:
+			props[k] = v
+		default:
+			if p, err := json.Marshal(v); err == nil {
+				props[k] = string(p)
+			} else {
+				fmt.Println(err)
+			}
+		}
 	}
 	props[timestampID] = entry.Time.UTC()
 	props[levelID] = entry.Level.String()
