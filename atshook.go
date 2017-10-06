@@ -1,7 +1,6 @@
 package atshook
 
 import (
-	"errors"
 	"fmt"
 	"github.com/Azure/azure-sdk-for-go/storage"
 	"github.com/sirupsen/logrus"
@@ -77,7 +76,7 @@ func createTable(tableCli storage.TableServiceClient, tableName string) (*storag
 
 		if azureErr.Code != tableAlreadyExists {
 			// we are ok if the table already exists. Otherwise return nil
-			return nil, errors.New("Unable to create log table")
+			return nil, fmt.Errorf("Unable to create log table: %s", tableName)
 		}
 
 	}
